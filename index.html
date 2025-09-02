@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcard App</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Landing Page -->
+<div id="landing-page" class="page active">
+  <div class="landing-content">
+    <h1>🌟 Welcome to AI Study Buddy! 🌟</h1>
+    <p>Your cute companion for creating flashcards from your notes.</p>
+    <p>📚 Paste your study notes, and we'll generate smart flashcards for you! 📚</p>
+    <button id="get-started-btn" class="cute-btn">Get Started</button>
+  </div>
+</div>
+
+<!-- Login Page -->
+<div id="login-page" class="page">
+  <button id="back-to-landing" class="back-btn">← Back</button>
+  <h2>Login</h2>
+  <form id="login-form">
+    <input type="text" id="username" placeholder="Username" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+  </form>
+  <a href="#" id="register-link">Register</a>
+</div>
+
+<!-- Register Page -->
+<div id="register-page" class="page">
+  <button id="back-to-login" class="back-btn">← Back</button>
+  <h2>Register</h2>
+  <form id="register-form">
+    <input type="text" id="reg-username" placeholder="Username" required><br>
+    <input type="email" id="reg-email" placeholder="Email" required><br>
+    <input type="password" id="reg-password" placeholder="Password" required><br>
+    <button type="submit">Register</button>
+  </form>
+  <a href="#" id="login-link">Back to Login</a>
+</div>
+
+<!-- App Page -->
+<div id="app-page" class="page">
+  <h2>Welcome, <span id="current-user"></span></h2>
+  <button id="logout-btn">Logout</button><br><br>
+  <textarea id="notes" placeholder="Paste your study notes here"></textarea><br>
+  <button id="generateBtn">Generate Flashcards</button>
+  <button id="saveBtn" style="display:none;">Save Flashcards</button>
+  <div id="flashcards" class="flashcards-container"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
