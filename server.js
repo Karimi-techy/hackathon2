@@ -1,16 +1,23 @@
+// -----------------------------
+// Server.js — Clean & Fixed Version
+// -----------------------------
+
+// Load environment variables
+require('dotenv').config();
+console.log('HF Token loaded:', process.env.HUGGING_FACE_TOKEN ? '✅ Yes' : '❌ No');
+
+// Imports
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { HfInference } = require('@huggingface/inference');
-require('dotenv').config();
-console.log('HF Token loaded:', process.env.HUGGINGFACE_API_TOKEN ? 'Yes' : 'No');
 
-
+// Initialize Express app
 const app = express();
 const PORT = 3000;
 
 // Initialize Hugging Face client
-const hf = new HfInference(process.env.HUGGINGFACE_API_TOKEN);
+const hf = new HfInference(process.env.HUGGING_FACE_TOKEN);
 
 // Middleware
 app.use(cors());
@@ -18,28 +25,22 @@ app.use(bodyParser.json());
 
 // In-memory stores
 let users = []; // {username, email, password}
-let sessions = {}; // { sessionId: username }
-let flashcardsStore = {}; // { username: [{notes, flashcards}] }
+let sessions = {}; // {sessionId: username}
+let flashcardsStore = {}; // {username: [{notes, flashcards}]}
 
 // Helper to generate simple session ID
 const generateSessionId = () => Math.random().toString(36).substr(2, 9);
 
-// Login
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(u => u.username === username && u.password === password);
-  if (!user) return res.json({ error: 'Invalid credentials' });
+// -----------------------------
+// Auth Routes
+// -----------------------------
 
-  const sessionId = generateSessionId();
-  sessions[sessionId] = username;
-
-  res.json({ username: user.username, sessionId });
-});
-
-// Register
+// Register new user
 app.post('/register', (req, res) => {
   const { username, email, password } = req.body;
-  if (users.find(u => u.username === username)) return res.json({ error: 'Username already exists' });
+  if (users.find(u => u.username === username)) {
+    return res.json({ error: 'Username already exists' });
+  }
 
   users.push({ username, email, password });
   const sessionId = generateSessionId();
@@ -48,12 +49,24 @@ app.post('/register', (req, res) => {
   res.json({ username, sessionId });
 });
 
-// Check auth
+// Login
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(u => u.username === username && u.password === password);
+
+  if (!user) return res.json({ error: 'Invalid credentials' });
+
+  const sessionId = generateSessionId();
+  sessions[sessionId] = username;
+
+  res.json({ username: user.username, sessionId });
+});
+
+// Check authentication
 app.get('/check_auth', (req, res) => {
   const sessionId = req.headers['session-id'];
   const username = sessions[sessionId];
-  if (username) res.json({ authenticated: true, username });
-  else res.json({ authenticated: false });
+  res.json({ authenticated: !!username, username });
 });
 
 // Logout
@@ -63,7 +76,10 @@ app.post('/logout', (req, res) => {
   res.json({ success: true });
 });
 
-// Generate flashcards using Hugging Face AI
+// -----------------------------
+// Flashcard Generation (Hugging Face)
+// -----------------------------
+
 app.post('/generate_flashcards', async (req, res) => {
   const sessionId = req.headers['session-id'];
   const username = sessions[sessionId];
@@ -73,8 +89,7 @@ app.post('/generate_flashcards', async (req, res) => {
   if (!notes) return res.json({ error: 'No notes provided' });
 
   try {
-    // Create a prompt for the AI to generate flashcards
-    const prompt = `You are a helpful study assistant. Given the following study notes, create 5-8 high-quality flashcards. 
+    const prompt = `You are a helpful study assistant. Given the following study notes, create 5-8 high-quality flashcards.
 Each flashcard should have a clear question and a concise answer.
 
 Format your response EXACTLY like this (no extra text):
@@ -89,7 +104,7 @@ ${notes}
 
 Generate flashcards:`;
 
-    // Use Hugging Face text generation
+    // Hugging Face API call
     const response = await hf.textGeneration({
       model: 'mistralai/Mistral-7B-Instruct-v0.2',
       inputs: prompt,
@@ -101,13 +116,12 @@ Generate flashcards:`;
       }
     });
 
-    // Parse the AI response to extract flashcards
     const generatedText = response.generated_text;
     const flashcards = parseFlashcardsFromText(generatedText);
 
-    // Fallback: if AI parsing fails, use simple algorithm
+    // If parsing fails, use fallback
     if (flashcards.length === 0) {
-      console.log('AI parsing failed, using fallback');
+      console.log('⚠️ AI parsing failed, using fallback.');
       const fallbackCards = generateFallbackFlashcards(notes);
       return res.json({ flashcards: fallbackCards });
     }
@@ -115,41 +129,36 @@ Generate flashcards:`;
     res.json({ flashcards });
 
   } catch (error) {
-    console.error('Hugging Face API error:', error);
-    
-    // Fallback to simple algorithm if API fails
+    console.error('🚨 Hugging Face API error:', error.message);
+
+    // Fallback flashcards if API fails
     const fallbackCards = generateFallbackFlashcards(notes);
     res.json({ flashcards: fallbackCards });
   }
 });
 
-// Helper function to parse flashcards from AI text
+// -----------------------------
+// Helper Functions
+// -----------------------------
+
 function parseFlashcardsFromText(text) {
   const flashcards = [];
-  
-  // Split by Q: to find question blocks
   const blocks = text.split(/Q:/i).filter(b => b.trim());
-  
+
   blocks.forEach(block => {
-    // Split by A: to separate question and answer
     const parts = block.split(/A:/i);
     if (parts.length >= 2) {
       const question = parts[0].trim();
-      const answer = parts[1].trim().split(/Q:/i)[0].trim(); // Get answer before next Q
-      
+      const answer = parts[1].trim().split(/Q:/i)[0].trim();
       if (question && answer) {
-        flashcards.push({
-          question: question,
-          answer: answer
-        });
+        flashcards.push({ question, answer });
       }
     }
   });
-  
+
   return flashcards;
 }
 
-// Fallback flashcard generator (simple algorithm)
 function generateFallbackFlashcards(notes) {
   const sentences = notes
     .split(/[.!?\n]+/)
@@ -158,22 +167,17 @@ function generateFallbackFlashcards(notes) {
 
   const flashcards = [];
 
-  sentences.forEach((sentence) => {
-    // Look for definitions
+  sentences.forEach(sentence => {
     if (sentence.match(/\b(is|are|means|refers to|defined as)\b/i)) {
       const parts = sentence.split(/\b(is|are|means|refers to|defined as)\b/i);
       if (parts.length >= 3) {
         const subject = parts[0].trim();
         const definition = parts.slice(2).join('').trim();
-        flashcards.push({
-          question: `What is ${subject}?`,
-          answer: definition
-        });
+        flashcards.push({ question: `What is ${subject}?`, answer: definition });
         return;
       }
     }
 
-    // Look for key-value pairs with colons
     if (sentence.includes(':')) {
       const parts = sentence.split(':');
       if (parts.length >= 2) {
@@ -185,7 +189,6 @@ function generateFallbackFlashcards(notes) {
       }
     }
 
-    // General important facts
     if (sentence.length > 30 && flashcards.length < 8) {
       const words = sentence.split(' ');
       const topic = words.slice(0, 5).join(' ');
@@ -196,7 +199,6 @@ function generateFallbackFlashcards(notes) {
     }
   });
 
-  // Ensure at least one flashcard
   if (flashcards.length === 0) {
     flashcards.push({
       question: 'What are the main points from these notes?',
@@ -204,10 +206,12 @@ function generateFallbackFlashcards(notes) {
     });
   }
 
-  return flashcards.slice(0, 8); // Return max 8 cards
+  return flashcards.slice(0, 8);
 }
 
+// -----------------------------
 // Save flashcards
+// -----------------------------
 app.post('/save_flashcards', (req, res) => {
   const sessionId = req.headers['session-id'];
   const username = sessions[sessionId];
@@ -220,5 +224,9 @@ app.post('/save_flashcards', (req, res) => {
   res.json({ success: true });
 });
 
-// Start server
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// -----------------------------
+// Start Server
+// -----------------------------
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
