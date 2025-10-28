@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flashcard App</title>
+<title>AI Study Buddy</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,48 +11,163 @@
 <!-- Landing Page -->
 <div id="landing-page" class="page active">
   <div class="landing-content">
-    <h1>🌟 Welcome to AI Study Buddy! 🌟</h1>
-    <p>Your cute companion for creating flashcards from your notes.</p>
-    <p>📚 Paste your study notes, and we'll generate smart flashcards for you! 📚</p>
-    <button id="get-started-btn" class="cute-btn">Get Started</button>
+    <h1>📑 AI Study Buddy</h1>
+    <p class="subtitle">Your Smart Companion for Effortless Learning</p>
+    <p class="description">Transform your study notes into interactive flashcards instantly.
+       Powered by AI to help you learn faster and remember better.</p>
+    <button id="get-started-btn" class="primary-btn">Get Started</button>
   </div>
 </div>
 
 <!-- Login Page -->
 <div id="login-page" class="page">
-  <button id="back-to-landing" class="back-btn">← Back</button>
-  <h2>Login</h2>
-  <form id="login-form">
-    <input type="text" id="username" placeholder="Username" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-  </form>
-  <a href="#" id="register-link">Register</a>
+  <div class="auth-container">
+    <button id="back-to-landing" class="back-btn">← Back</button>
+    <h2>Welcome Back</h2>
+    <form id="login-form">
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Username" required>
+      </div>
+      <div class="form-group">
+        <input type="password" id="password" placeholder="Password" required>
+      </div>
+      <button type="submit" class="submit-btn">Sign In</button>
+    </form>
+    <div class="auth-link">
+      Don't have an account? <a href="#" id="register-link">Register here</a>
+    </div>
+  </div>
 </div>
 
 <!-- Register Page -->
 <div id="register-page" class="page">
-  <button id="back-to-login" class="back-btn">← Back</button>
-  <h2>Register</h2>
-  <form id="register-form">
-    <input type="text" id="reg-username" placeholder="Username" required><br>
-    <input type="email" id="reg-email" placeholder="Email" required><br>
-    <input type="password" id="reg-password" placeholder="Password" required><br>
-    <button type="submit">Register</button>
-  </form>
-  <a href="#" id="login-link">Back to Login</a>
+  <div class="auth-container">
+    <button id="back-to-login" class="back-btn">← Back</button>
+    <h2>Create Account</h2>
+    <form id="register-form">
+      <div class="form-group">
+        <input type="text" id="reg-username" placeholder="Username" required>
+      </div>
+      <div class="form-group">
+        <input type="email" id="reg-email" placeholder="Email" required>
+      </div>
+      <div class="form-group">
+        <input type="password" id="reg-password" placeholder="Password" required>
+      </div>
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
+    <div class="auth-link">
+      Already have an account? <a href="#" id="login-link">Sign in here</a>
+    </div>
+  </div>
 </div>
 
 <!-- App Page -->
 <div id="app-page" class="page">
-  <h2>Welcome, <span id="current-user"></span></h2>
-  <button id="logout-btn">Logout</button><br><br>
-  <textarea id="notes" placeholder="Paste your study notes here"></textarea><br>
-  <button id="generateBtn">Generate Flashcards</button>
-  <button id="saveBtn" style="display:none;">Save Flashcards</button>
-  <div id="flashcards" class="flashcards-container"></div>
+  <div class="app-header">
+    <div class="user-info">Hello, <span id="current-user"></span>! 👋</div>
+    <button id="logout-btn" class="logout-btn">Logout</button>
+  </div>
+  
+  <div class="app-content">
+    <div class="input-section">
+      <h3>📝 Paste Your Study Notes</h3>
+      <textarea id="notes" placeholder="Paste your study notes here and we'll create flashcards for you..."></textarea>
+      <div class="button-group">
+        <button id="generateBtn">Generate Flashcards</button>
+        <button id="saveBtn" style="display:none;">Save Flashcards</button>
+        <button id="quizBtn" style="display:none;">Start Quiz Mode</button>
+      </div>
+    </div>
+    
+    <div class="flashcards-section">
+      <div id="flashcards" class="flashcards-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz Mode Page -->
+<div id="quiz-page" class="page">
+  <div class="app-header">
+    <div class="quiz-header-info">
+      <h2>🎯 Quiz Mode</h2>
+      <div class="quiz-stats">
+        <span>Question <span id="current-question-num">1</span> of <span id="total-questions">0</span></span>
+        <span class="score-display">Score: <span id="quiz-score">0</span></span>
+      </div>
+    </div>
+    <button id="exit-quiz-btn" class="logout-btn">Exit Quiz</button>
+  </div>
+  
+  <div class="quiz-content">
+    <div class="quiz-card">
+      <div class="quiz-question">
+        <h3>Question</h3>
+        <p id="quiz-question-text"></p>
+      </div>
+      
+      <div class="quiz-answer" id="quiz-answer-section" style="display:none;">
+        <h3>Answer</h3>
+        <p id="quiz-answer-text"></p>
+        
+        <div class="quiz-actions">
+          <button id="got-it-btn" class="correct-btn">✓ Got It Right</button>
+          <button id="missed-it-btn" class="incorrect-btn">✗ Missed It</button>
+        </div>
+      </div>
+      
+      <button id="show-answer-btn" class="primary-btn">Show Answer</button>
+    </div>
+    
+    <div class="quiz-progress">
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz Results Page -->
+<div id="quiz-results-page" class="page">
+  <div class="app-header">
+    <h2>📊 Quiz Results</h2>
+    <button id="back-to-app-btn" class="logout-btn">Back to Flashcards</button>
+  </div>
+  
+  <div class="results-content">
+    <div class="results-summary">
+      <div class="results-score">
+        <h1 id="final-score">0%</h1>
+        <p>Final Score</p>
+      </div>
+      
+      <div class="results-stats">
+        <div class="stat-item correct">
+          <div class="stat-number" id="correct-count">0</div>
+          <div class="stat-label">Correct</div>
+        </div>
+        <div class="stat-item incorrect">
+          <div class="stat-number" id="incorrect-count">0</div>
+          <div class="stat-label">Incorrect</div>
+        </div>
+        <div class="stat-item total">
+          <div class="stat-number" id="total-count">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+      </div>
+      
+      <div class="results-actions">
+        <button id="retake-quiz-btn" class="primary-btn">Retake Quiz</button>
+        <button id="review-missed-btn" class="secondary-btn" style="display:none;">Review Missed Cards</button>
+      </div>
+    </div>
+    
+    <div class="missed-cards-section" id="missed-cards-section" style="display:none;">
+      <h3>Cards You Missed:</h3>
+      <div id="missed-cards-container" class="flashcards-container"></div>
+    </div>
+  </div>
 </div>
 
 <script src="script.js"></script>
 </body>
-</html>
