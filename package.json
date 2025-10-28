@@ -1,4 +1,10 @@
 {
+  "name": "hackathon2",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "@huggingface/inference": "^4.11.0",
     "body-parser": "^2.2.0",
