@@ -1,3 +1,4 @@
+HEAD
 ﻿## Where it's live
 
 - https://hackathon2-5bbw.onrender.com
@@ -51,3 +52,5 @@ Open http://localhost:3000 (or the port shown by the server), paste your notes, 
 - `schema.sql` — optional database schema
 - `package.json` — npm scripts and dependencies
 
+site is live at https://hackathon2-5bbw.onrender.com
+63e7355935749fea4c208052ff5bc06f1b79762a
