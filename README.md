@@ -1,4 +1,10 @@
-﻿# Budy 2.0  Study & Revision Helper
+﻿## Where it's live
+
+- https://hackathon2-5bbw.onrender.com
+
+
+
+# Budy 2.0  Study & Revision Helper
 
 Budy 2.0 helps students revise notes more effectively. Users paste or type their notes into the app; Budy 2.0 automatically generates flashcards and practice questions, presents them in an interactive study view, and grades answers so students can track progress and focus on weak areas.
 
@@ -8,11 +14,9 @@ Budy 2.0 helps students revise notes more effectively. Users paste or type their
 - Auto-generate flashcards (front/back) from pasted content
 - Auto-generate short-answer and multiple-choice practice questions
 - Immediate grading with feedback and a strengths/weaknesses summary
-- Simple progress tracking and study reminders to help students stay on track
 
-## Where it's live
 
-- https://hackathon2-5bbw.onrender.com
+
 
 ## Stack
 
@@ -47,10 +51,3 @@ Open http://localhost:3000 (or the port shown by the server), paste your notes, 
 - `schema.sql` — optional database schema
 - `package.json` — npm scripts and dependencies
 
-## Next steps I can help with
-
-- Add example screenshots or a short demo walkthrough
-- Add a `start` script to `package.json` if missing
-- Add a `LICENSE` file
-
-If you'd like any of the above (or a shorter one-line blurb for a social post), tell me which and I'll add it.
