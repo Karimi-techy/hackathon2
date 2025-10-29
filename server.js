@@ -4,7 +4,7 @@
 
 // Load environment variables
 require('dotenv').config();
-console.log('HF Token loaded:', process.env.HUGGING_FACE_TOKEN ? '✅ Yes' : '❌ No');
+console.log('HF Token loaded:', process.env.HUGGING_FACE_API ? '✅ Yes' : '❌ No');
 
 // Imports
 const express = require('express');
@@ -17,7 +17,7 @@ const app = express();
 const PORT = 3000;
 
 // Initialize Hugging Face client
-const hf = new HfInference(process.env.HUGGING_FACE_TOKEN);
+const hf = new HfInference(process.env.HUGGING_FACE_API);
 
 // Middleware
 app.use(cors());
